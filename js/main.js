@@ -52,13 +52,13 @@ function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadline
 function createVis() {
     var vis = this;
 
-    vis.scatterplot = new ScatterPlot("scatterplot", hearstHeadlineData);
+    vis.histogram = new Histogram("histogram", hearstHeadlineData);
 }
 
-function submitWord() {
-    var vis = this;
-    var word = d3.select('#word').property("value");
-
-    vis.scatterplot.word = word;
-    vis.scatterplot.wrangleData();
-}
+// function submitWord() {
+//     var vis = this;
+//     var word = d3.select('#word').property("value");
+//
+//     vis.scatterplot.word = word;
+//     vis.scatterplot.wrangleData();
+// }
