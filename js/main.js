@@ -18,12 +18,12 @@ function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadline
             'data' : elleHeadlineData
         },
         {
-            'title' : 'Marie Claire',
-            'data' : marieHeadlineData
-        },
-        {
             'title' : 'Seventeen',
             'data' : seventeenHeadlineData
+        },
+        {
+            'title' : 'Marie Claire',
+            'data' : marieHeadlineData
         }
     ];
 
@@ -52,7 +52,8 @@ function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadline
 function createVis() {
     var vis = this;
 
-    vis.histogram = new Histogram("histogram", hearstHeadlineData);
+    // TODO abstract out publications list
+    vis.stackedbarchart = new StackedBarChart("stackedbarchart", hearstHeadlineData, ['Elle', 'Seventeen', 'Marie Claire']);
 }
 
 // function submitWord() {
