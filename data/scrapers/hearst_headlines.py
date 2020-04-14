@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 URL_BASE = 'https://www.elle.com'
-URL_EXT = '/beauty/makeup-skin-care/'
+URL_EXT = '/beauty/'
+WRITE_FILE = 'elle_beauty.tsv'
 CUR_PATH = pathlib.Path().absolute();
 
 options = webdriver.ChromeOptions()
@@ -18,8 +19,9 @@ driver.get(URL_BASE + URL_EXT)
 def cleanText(t):
 	return " ".join(t.split())
 
-NUM_OF_LOADS = 150
+NUM_OF_LOADS = 100
 i = 0
+error_count = 0
 while i < NUM_OF_LOADS:
 	driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 	more_buttons = driver.find_elements_by_class_name("load-more")
@@ -29,8 +31,12 @@ while i < NUM_OF_LOADS:
 	except IndexError:
 		print("ERROR: unable to load index " + str(i) + ", attempting again.")
 		i -= 1
+		error_count += 1
+		if error_count > 50:
+			break
 	time.sleep(1)
 	i += 1
+	error_count = 0
 page_source = driver.page_source
 
 html = BeautifulSoup(page_source, 'html.parser')
@@ -41,6 +47,8 @@ for item in html.findAll('div', {'class' : 'full-item'}):
 	if len(titles) != 1 or len(dates) != 1:
 		print("ERROR: skipping item, missing title or publication date.")
 		continue
+	sections = item.findAll('a', {'class' : 'full-item-parent-link'})
+	section = '' if len(sections) == 0 else cleanText(sections[0].text)
 	deks = item.findAll('div', {'class' : 'full-item-dek'})
 	dek =  '' if len(deks) == 0 else cleanText(deks[0].text)
 	authors = item.findAll('span', {'class' : 'byline-name'})
@@ -54,14 +62,15 @@ for item in html.findAll('div', {'class' : 'full-item'}):
 		'href' : URL_BASE + titles[0]['href'],
 		'publish_date' : dates[0]['data-publish-date'],
 		'dek' : dek,
+		'section' : section,
 		'author' : author,
 		'thumbnail' : image,
 		'sponsor' : sponsor
 	}
 	articles.append(a)
 
-with open('elle_beauty.tsv', 'w') as file:
+with open(WRITE_FILE, 'w') as file:
 	writer = csv.writer(file, delimiter='\t')
-	writer.writerow(['title', 'href', 'dek', 'author', 'publish_date', 'thumbnail', 'sponsor'])
+	writer.writerow(['title', 'href', 'dek', 'section', 'author', 'publish_date', 'thumbnail', 'sponsor'])
 	for a in articles:
-		writer.writerow([a['title'], a['href'], a['dek'], a['author'], a['publish_date'], a['thumbnail'], a['sponsor']])
+		writer.writerow([a['title'], a['href'], a['dek'], a['section'], a['author'], a['publish_date'], a['thumbnail'], a['sponsor']])

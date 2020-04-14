@@ -10,10 +10,19 @@
 
     <div>
         <h1>English 298DH Final Project</h1>
+        <br/>
+        <label for="overview-chart-select-publication">Select:</label>
+        <select id="overview-chart-select-publication" onchange="updateChart()">
+            <option value="All">All</option>
+            <option value="Elle">Elle</option>
+            <option value="Cosmopolitan">Cosmopolitan</option>
+            <option value="Seventeen">Seventeen</option>
+        </select>
+        <div id="overview-chart"></div>
+        <br/>
         <label for="word">Word:</label>
         <input type="text" id="word" name="word">
         <input type="submit" onclick="submitWord()">
-        <div id="stackedbarchart"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
@@ -24,7 +33,7 @@
     <script src="js/d3-tip.js"></script>
     <script src="js/queue.v1.min.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/stackedbarchart.js"></script>
+    <script src="js/overview-stacked-bar-chart.js"></script>
 
 </body>
 </html>

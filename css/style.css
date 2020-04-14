@@ -1,20 +1,19 @@
 /* custom css rules */
 
 body {
-
     height: 100%;
     font-family: "Avenir Next";
-    background-color: #e3dac9;
+    padding: 20px;
 }
 
 h1 {
     font-size: 75px;
-    font-family: "Blockletter", serif;
+    font-family: "Avenir Next", serif;
 }
 
 h2 {
     font-size: 50px;
-    font-family: "Blockletter", serif;
+    font-family: "Avenir Next", serif;
 }
 
 

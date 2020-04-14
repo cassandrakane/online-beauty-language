@@ -2,12 +2,12 @@ let hearstHeadlineData = [];
 
 queue()
     .defer(d3.tsv,"data/elle_beauty.tsv")
-    .defer(d3.tsv,"data/esquire_beauty.tsv")
-    .defer(d3.tsv,"data/marie_beauty.tsv")
+    .defer(d3.tsv,"data/cosmo_beauty.tsv")
     .defer(d3.tsv,"data/seventeen_beauty.tsv")
+    .defer(d3.tsv,"data/esquire_beauty.tsv")
     .await(wrangleData);
 
-function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadlineData, seventeenHeadlineData) {
+function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadlineData, esquireHeadlineData) {
     if  (error) {
         console.log(error);
     }
@@ -18,12 +18,12 @@ function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadline
             'data' : elleHeadlineData
         },
         {
-            'title' : 'Seventeen',
-            'data' : seventeenHeadlineData
+            'title' : 'Cosmopolitan',
+            'data' : cosmoHeadlineData
         },
         {
-            'title' : 'Marie Claire',
-            'data' : marieHeadlineData
+            'title' : 'Seventeen',
+            'data' : seventeenHeadlineData
         }
     ];
 
@@ -40,7 +40,8 @@ function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadline
                 'sponsor' : headlineRow['sponsor'],
                 'publication' : magHeadlineData['title']
             };
-            if (headline['publishDate'].getFullYear() >= 2010 && headline['publishDate'].getFullYear() <= 2019) {
+            if ((headline['publishDate'].getFullYear() >= 2012 && headline['publishDate'].getFullYear() <= 2019) ||
+                (headline['publishDate'].getFullYear() === 2020 && headline['publishDate'].getMonth()) === 0) {
                 hearstHeadlineData.push(headline);
             }
         })
@@ -52,14 +53,32 @@ function wrangleData(error, elleHeadlineData, esquireHeadlineData, marieHeadline
 function createVis() {
     var vis = this;
 
-    // TODO abstract out publications list
-    vis.stackedbarchart = new StackedBarChart("stackedbarchart", hearstHeadlineData, ['Elle', 'Seventeen', 'Marie Claire']);
+    var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
+    vis.stackedbarchart = new StackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
 }
 
-// function submitWord() {
-//     var vis = this;
-//     var word = d3.select('#word').property("value");
-//
-//     vis.scatterplot.word = word;
-//     vis.scatterplot.wrangleData();
-// }
+function updateChart() {
+    var vis = this;
+    var selectPublicationValue = d3.select('#overview-chart-select-publication').property("value");
+
+    var filteredHearstHeadlineData = [];
+    if (selectPublicationValue === 'All') {
+        filteredHearstHeadlineData = hearstHeadlineData;
+    } else {
+        hearstHeadlineData.forEach(function (headline) {
+            if (headline.publication === selectPublicationValue) {
+                filteredHearstHeadlineData.push(headline);
+            }
+        });
+    }
+
+    vis.stackedbarchart.filteredData = filteredHearstHeadlineData;
+    vis.stackedbarchart.wrangleData();
+}
+
+function submitWord() {
+    var vis = this;
+    var word = d3.select('#word').property("value");
+
+    // TODO implement
+}

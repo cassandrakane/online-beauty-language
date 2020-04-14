@@ -18,19 +18,18 @@ StackedBarChart.prototype.initVis = function() {
     var vis = this;
 
     vis.margin = {top: 30, right: 50, bottom: 40, left: 90};
-
-    vis.width = 800 - vis.margin.left - vis.margin.right;
+    vis.width = 900 - vis.margin.left - vis.margin.right;
     vis.height = 350 - vis.margin.top - vis.margin.bottom;
 
-    // SVG drawing area
-    vis.svg = d3.select("#" + vis.parentElement).append("svg")
+    vis.svg = d3.select("#" + vis.parentElement)
+        .append("svg")
         .attr("width", vis.width + vis.margin.left + vis.margin.right)
         .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
     vis.x = d3.scaleBand()
-        .rangeRound([0, vis.width])
+        .range([1, vis.width - 1])
         .paddingInner(0.05)
         .align(0.1);
 
@@ -38,9 +37,10 @@ StackedBarChart.prototype.initVis = function() {
         .rangeRound([vis.height, 0])
         .nice();
 
-    vis.z = d3.scaleOrdinal(d3.schemeCategory10);
+    vis.z = d3.scaleOrdinal(["#EF9A9A", "#90CAF9", "#C5E1A5"]);
 
     vis.xAxis = d3.axisBottom()
+        .tickSizeOuter(0)
         .scale(vis.x);
 
     vis.yAxis = d3.axisLeft()
@@ -59,16 +59,16 @@ StackedBarChart.prototype.initVis = function() {
             (vis.height + vis.margin.top + 8) + ")")
         .style("text-anchor", "middle")
         .style("font-size", "12px")
-        .text("Year");
+        .text("Months");
 
     vis.svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - vis.margin.left)
         .attr("x", 0 - (vis.height / 2))
-        .attr("dy", "1em")
+        .attr("dy", "4em")
         .style("text-anchor", "middle")
         .style("font-size", "12px")
-        .text("Title Length");
+        .text("Number of Articles");
 
     vis.wrangleData();
 };
@@ -111,9 +111,6 @@ StackedBarChart.prototype.wrangleData = function() {
     });
 
     vis.displayData = allData;
-
-
-    // Update the visualization
     vis.updateVis();
 };
 
@@ -139,28 +136,50 @@ StackedBarChart.prototype.updateVis = function(){
         dataStack.push(t)
     });
 
-    var layers = d3.stack().keys(vis.publications)(dataStack);
-    var max = d3.max(layers[layers.length - 1], function(d) { return d[1]; });
+    var layersData = d3.stack().keys(vis.publications)(dataStack);
+    var max = d3.max(layersData[layersData.length - 1], function(d) { return d[1]; });
 
     vis.x.domain(dates.reverse());
     vis.y.domain([0, max]);
 
-    var rect = vis.svg.append("g").selectAll("g")
-        .data(layers);
+    vis.svg.selectAll(".layers").remove();
 
-    rect.enter()
+    var layers = vis.svg.append("g")
+        .attr("class", "layers")
+        .selectAll(".layers")
+        .data(layersData);
+
+    var rect = layers.enter()
         .append("g")
         .style("fill", function(d) { return vis.z(d.key); })
         .selectAll("rect")
-        .data(function(d) {  return d; })
-        .enter().append("rect")
+        .data(function(d) {  return d; });
+
+    rect.enter()
+        .append("rect")
         .attr("x", function(d) { return vis.x(d.data.publishDate); })
+        .attr("width", vis.x.bandwidth())
+        .attr("y", vis.y(0))
+        .attr("height", 0)
+        .merge(rect)
+        .transition()
+        .duration(800)
         .attr("y", function(d) { return vis.y(d[1]); })
-        .attr("height", function(d) { return vis.y(d[0]) - vis.y(d[1]); })
-        .attr("width", vis.x.bandwidth());
+        .attr("height", function(d) { return vis.y(d[0]) - vis.y(d[1]); });
 
     rect.exit().remove();
+    layers.exit().remove();
 
     vis.svg.select(".x-axis").call(vis.xAxis);
-    vis.svg.select(".y-axis").call(vis.yAxis);
+    var xTicks = d3.selectAll(".tick");
+    xTicks.each(function(t, i) {
+        if (i % 6 !== 0) {
+            d3.select(this).remove();
+        }
+    });
+
+    vis.svg.select(".y-axis")
+        .transition()
+        .duration(800)
+        .call(vis.yAxis);
 };
