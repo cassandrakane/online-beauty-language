@@ -54,7 +54,7 @@ function createVis() {
     var vis = this;
 
     var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
-    vis.stackedbarchart = new StackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
+    vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
 }
 
 function updateChart() {
@@ -72,8 +72,8 @@ function updateChart() {
         });
     }
 
-    vis.stackedbarchart.filteredData = filteredHearstHeadlineData;
-    vis.stackedbarchart.wrangleData();
+    vis.overviewStackedBarChart.filteredData = filteredHearstHeadlineData;
+    vis.overviewStackedBarChart.wrangleData();
 }
 
 function submitWord() {

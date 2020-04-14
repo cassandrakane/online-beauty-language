@@ -1,11 +1,11 @@
 /*
- * StackedBarChart - Object constructor function
+ * OverviewStackedBarChart - Object constructor function
  * @param _parentElement 	-- the HTML element in which to draw the visualization
  * @param _data	            -- publication data
  * @param _publications     -- list of publications
  */
 
-StackedBarChart = function(_parentElement, _data, _publications){
+OverviewStackedBarChart = function(_parentElement, _data, _publications){
     this.parentElement = _parentElement;
     this.data = _data;
     this.publications = _publications;
@@ -14,7 +14,7 @@ StackedBarChart = function(_parentElement, _data, _publications){
     this.initVis();
 };
 
-StackedBarChart.prototype.initVis = function() {
+OverviewStackedBarChart.prototype.initVis = function() {
     var vis = this;
 
     vis.margin = {top: 30, right: 50, bottom: 40, left: 90};
@@ -73,7 +73,7 @@ StackedBarChart.prototype.initVis = function() {
     vis.wrangleData();
 };
 
-StackedBarChart.prototype.wrangleData = function() {
+OverviewStackedBarChart.prototype.wrangleData = function() {
     var vis = this;
 
     var formatDate = d3.timeFormat("%m/%y");
@@ -114,7 +114,7 @@ StackedBarChart.prototype.wrangleData = function() {
     vis.updateVis();
 };
 
-StackedBarChart.prototype.updateVis = function(){
+OverviewStackedBarChart.prototype.updateVis = function(){
     var vis = this;
 
     var nestedData = d3.nest()
