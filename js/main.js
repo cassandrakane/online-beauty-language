@@ -55,8 +55,12 @@ function createVis() {
     var vis = this;
 
     var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
-    // vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
-    vis.sectionTreemap = new SectionTreemap("section-treemap", hearstHeadlineData);
+    vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
+
+    vis.sectionTreemap = new SectionTreemap("section-treemap", []);
+    var sectionYearSlider = document.getElementById("section-treemap-years");
+    sectionYearSlider.value = "2019";
+    updateSectionMap();
 }
 
 function updateOverviewChart() {
@@ -76,6 +80,25 @@ function updateOverviewChart() {
 
     vis.overviewStackedBarChart.filteredData = filteredHearstHeadlineData;
     vis.overviewStackedBarChart.wrangleData();
+}
+
+function updateSectionMap() {
+    var vis = this;
+    var selectSectionYear = d3.select('#section-treemap-years').property("value");
+
+    var sectionYearSlider = document.getElementById("section-treemap-year-label");
+    sectionYearSlider.innerHTML = "Year: " + selectSectionYear;
+
+    // TODO cache
+    var filteredHearstHeadlineData = [];
+    hearstHeadlineData.forEach(function (headline) {
+        if (headline.publishDate.getFullYear() === +selectSectionYear) {
+            filteredHearstHeadlineData.push(headline);
+        }
+    });
+
+    vis.sectionTreemap.filteredData = filteredHearstHeadlineData;
+    vis.sectionTreemap.wrangleData();
 }
 
 function submitWord() {

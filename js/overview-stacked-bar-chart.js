@@ -37,7 +37,7 @@ OverviewStackedBarChart.prototype.initVis = function() {
         .rangeRound([vis.height, 0])
         .nice();
 
-    vis.z = d3.scaleOrdinal(["#EF9A9A", "#90CAF9", "#C5E1A5"]);
+    vis.z = d3.scaleOrdinal(["#E57373", "#64B5F6", "#AED581"]);
 
     vis.xAxis = d3.axisBottom()
         .tickSizeOuter(0)

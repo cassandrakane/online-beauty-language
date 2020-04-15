@@ -21,6 +21,10 @@
         <div id="overview-chart"></div>
         <br/>
         <h3>Sections</h3>
+        <div class="slider-container">
+            <input type="range" class="slider" id="section-treemap-years" min="2012" max="2019" oninput="updateSectionMap()">
+        </div>
+        <span id="section-treemap-year-label">Year: </span>
         <div id="section-treemap"></div>
         <h3>Word Frequency</h3>
         <label for="word">Word:</label>
