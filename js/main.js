@@ -35,6 +35,7 @@ function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadli
                 'href' : headlineRow['href'],
                 'dek' : headlineRow['dek'],
                 'author' : headlineRow['author'],
+                'section' : headlineRow['section'],
                 'publishDate' : new Date(headlineRow['publish_date']),
                 'thumbnail' : headlineRow['thumbnail'],
                 'sponsor' : headlineRow['sponsor'],
@@ -54,10 +55,11 @@ function createVis() {
     var vis = this;
 
     var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
-    vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
+    // vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
+    vis.sectionTreemap = new SectionTreemap("section-treemap", hearstHeadlineData);
 }
 
-function updateChart() {
+function updateOverviewChart() {
     var vis = this;
     var selectPublicationValue = d3.select('#overview-chart-select-publication').property("value");
 
