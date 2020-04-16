@@ -61,6 +61,8 @@ function createVis() {
     var sectionYearSlider = document.getElementById("section-treemap-years");
     sectionYearSlider.value = "2019";
     updateSectionMap();
+
+    vis.wordFreqStackedAreaChart = new WordFreqStackedAreaChart("word-freq-chart", hearstHeadlineData, ' ');
 }
 
 function updateOverviewChart() {
@@ -101,9 +103,17 @@ function updateSectionMap() {
     vis.sectionTreemap.wrangleData();
 }
 
+function updateWordFreqAxes() {
+    var vis = this;
+
+    vis.wordFreqStackedAreaChart.wrangleData();
+}
+
 function submitWord() {
     var vis = this;
     var word = d3.select('#word').property("value");
+    console.log(word);
 
-    // TODO implement
+    vis.wordFreqStackedAreaChart.word = word;
+    vis.wordFreqStackedAreaChart.wrangleData();
 }

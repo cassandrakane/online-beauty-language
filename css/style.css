@@ -16,6 +16,10 @@ h2 {
     font-family: "Avenir Next", serif;
 }
 
+.form-control {
+    width: 50%;
+}
+
 /*********************/
 /*   RANGE SLIDER    */
 /*********************/
