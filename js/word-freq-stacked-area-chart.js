@@ -75,7 +75,7 @@ WordFreqStackedAreaChart.prototype.initVis = function() {
 };
 
 function cleanText(text) {
-    return text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+    return text.toLowerCase().replace("\-", " ").replace(/[.,\/#!$%\^&\*;:{}=_`~()\'\"]/g, "");
 }
 
 function wordInHeadline(word, headline) {
