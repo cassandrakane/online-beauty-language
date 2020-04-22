@@ -55,7 +55,7 @@ function createVis() {
     var vis = this;
 
     var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
-    vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList);
+    vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList, 'all-prop');
 
     vis.sectionTreemap = new SectionTreemap("section-treemap", []);
     var sectionYearSlider = document.getElementById("section-treemap-years");
@@ -68,19 +68,19 @@ function createVis() {
 function updateOverviewChart() {
     var vis = this;
     var selectPublicationValue = d3.select('#overview-chart-select-publication').property("value");
-
     var filteredHearstHeadlineData = [];
-    if (selectPublicationValue === 'All') {
+    if (selectPublicationValue === 'all-prop' || selectPublicationValue === 'all-count') {
         filteredHearstHeadlineData = hearstHeadlineData;
     } else {
         hearstHeadlineData.forEach(function (headline) {
-            if (headline.publication === selectPublicationValue) {
+            if (headline.publication.toLowerCase() === selectPublicationValue) {
                 filteredHearstHeadlineData.push(headline);
             }
         });
     }
 
     vis.overviewStackedBarChart.filteredData = filteredHearstHeadlineData;
+    vis.overviewStackedBarChart.selectPublicationValue = selectPublicationValue;
     vis.overviewStackedBarChart.wrangleData();
 }
 

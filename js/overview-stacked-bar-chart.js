@@ -5,10 +5,11 @@
  * @param _publications     -- list of publications
  */
 
-OverviewStackedBarChart = function(_parentElement, _data, _publications){
+OverviewStackedBarChart = function(_parentElement, _data, _publications, _selectPublicationValue){
     this.parentElement = _parentElement;
     this.data = _data;
     this.publications = _publications;
+    this.selectPublicationValue = _selectPublicationValue;
     this.filteredData = this.data;
 
     this.initVis();
@@ -126,15 +127,21 @@ OverviewStackedBarChart.prototype.updateVis = function(){
     var dates = nestedData.map(function(d) { return d.key; });
     var dataStack = [];
 
-    nestedData.forEach(function(d, i) {
+    nestedData.forEach(function(d) {
         d.values = d.values.map(function(e) { return e.value; });
+        var valueSum = d.values.reduce((a, b) => a + b, 0);
         var t = {};
         vis.publications.forEach(function(e, i) {
-            t[e] = d.values[i]
+            t[e] = d.values[i];
+            if (vis.selectPublicationValue === 'all-prop') {
+                t[e] = d.values[i] / valueSum;
+            }
         });
         t.publishDate = d.key;
         dataStack.push(t)
     });
+
+    console.log(dataStack);
 
     var layersData = d3.stack().keys(vis.publications)(dataStack);
     var max = d3.max(layersData[layersData.length - 1], function(d) { return d[1]; });

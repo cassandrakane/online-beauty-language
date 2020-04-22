@@ -33,16 +33,6 @@ SectionTreemap.prototype.initVis = function() {
     vis.wrangleData();
 };
 
-function cleanSectionName(name) {
-    if (name === 'Beauty') {
-        return 'General Beauty';
-    }
-    if (name.endsWith(' 2020')) {
-        return name.replace(' 2020', '');
-    }
-    return name;
-}
-
 SectionTreemap.prototype.wrangleData = function() {
     var vis = this;
 
@@ -79,7 +69,7 @@ SectionTreemap.prototype.wrangleData = function() {
     nestedData.forEach(function (publication) {
         publication.values.forEach(function (section) {
             var d = {
-                'name' : cleanSectionName(section.key),
+                'name' : section.key,
                 'parent' : publication.key,
                 'value' : section.value
             };
