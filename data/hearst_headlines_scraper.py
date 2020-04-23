@@ -7,7 +7,7 @@ from selenium import webdriver
 
 URL_BASE = 'https://www.elle.com'
 URL_EXT = '/beauty/'
-WRITE_FILE = 'elle_beauty.tsv'
+WRITE_FILE = '/orig/elle_beauty_orig.tsv'
 CUR_PATH = pathlib.Path().absolute();
 
 options = webdriver.ChromeOptions()

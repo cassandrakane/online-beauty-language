@@ -21,21 +21,18 @@ WordFreqStackedAreaChart.prototype.initVis = function() {
     vis.width = 900 - vis.margin.left - vis.margin.right;
     vis.height = 300 - vis.margin.top - vis.margin.bottom;
 
-    // SVG drawing area
     vis.svg = d3.select("#" + vis.parentElement).append("svg")
         .attr("width", vis.width + vis.margin.left + vis.margin.right)
         .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
-    // Path clipping
     vis.svg.append("defs").append("clipPath")
         .attr("id", "clip")
         .append("rect")
         .attr("width", vis.width)
         .attr("height", vis.height);
 
-    // Initialize stacked area layout
     var parseDate = d3.timeParse("%m/%y");
     vis.area = d3.area()
         .curve(d3.curveMonotoneX)
@@ -43,7 +40,6 @@ WordFreqStackedAreaChart.prototype.initVis = function() {
         .y0(function(d) { return vis.y(d[0]); })
         .y1(function(d) { return vis.y(d[1]); });
 
-    // Scales and axes
     vis.x = d3.scaleTime()
         .range([1, vis.width - 1]);
 
@@ -99,14 +95,27 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
     vis.nestedWordFreqData = d3.nest()
         .key(function(d) { return formatDate(d.publishDate); })
         .rollup(function(v) {
+            // TODO implement conditional
             return {
                 'count' : v.length,
-                'propContain' : d3.sum(v, function(d) { return wordInHeadline(vis.word, d.title); }) / v.length,
-                'propNotContain' : (v.length - d3.sum(v, function(d) { return wordInHeadline(vis.word, d.title); })) / v.length,
-                'countContain' : d3.sum(v, function(d) { return wordInHeadline(vis.word, d.title); }),
-                'countNotContain' : v.length - d3.sum(v, function(d) { return wordInHeadline(vis.word, d.title); }),
-                'allCountContain' : d3.sum(v, function(d) { return wordInHeadline(vis.word, d.title); }),
-                'allCountNotContain' : v.length - d3.sum(v, function(d) { return wordInHeadline(vis.word, d.title); }),
+                'propContain' : d3.sum(v, function(d) {
+                    return wordInHeadline(vis.word, d.lemmatized_title);
+                }) / v.length,
+                'propNotContain' : (v.length - d3.sum(v, function(d) {
+                    return wordInHeadline(vis.word, d.lemmatized_title);
+                })) / v.length,
+                'countContain' : d3.sum(v, function(d) {
+                    return wordInHeadline(vis.word, d.lemmatized_title);
+                }),
+                'countNotContain' : v.length - d3.sum(v, function(d) {
+                    return wordInHeadline(vis.word, d.lemmatized_title);
+                }),
+                'allCountContain' : d3.sum(v, function(d) {
+                    return wordInHeadline(vis.word, d.lemmatized_title);
+                }),
+                'allCountNotContain' : v.length - d3.sum(v, function(d) {
+                    return wordInHeadline(vis.word, d.lemmatized_title);
+                }),
             };
         })
         .entries(vis.data);
@@ -136,14 +145,11 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
 WordFreqStackedAreaChart.prototype.updateVis = function(){
     var vis = this;
 
-    // Update y-axis labels
     var selectedText = d3.select('#word-freq-y-select-box option:checked').text();
     vis.yLabel.text(selectedText);
 
-    // Update domain
     var parseDate = d3.timeParse("%m/%y");
     vis.x.domain(d3.extent(vis.wordFreqData, function(d) { return parseDate(d.publishDate); }));
-    // Get the maximum of the multi-dimensional array or in other words, get the highest peak of the uppermost layer
     vis.y.domain([0, d3.max(vis.displayData, function(d) {
         return d3.max(d, function(e) {
             if (vis.parameters[0] === "propContain" || vis.parameters[0] === 'countContain') {
@@ -190,7 +196,6 @@ WordFreqStackedAreaChart.prototype.updateVis = function(){
 
     labels.exit().remove();
 
-    // Draw the layers
     var categories = vis.svg.selectAll(".area")
         .data(vis.displayData);
 

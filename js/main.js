@@ -1,10 +1,10 @@
 let hearstHeadlineData = [];
 
 queue()
-    .defer(d3.tsv,"data/elle_beauty.tsv")
-    .defer(d3.tsv,"data/cosmo_beauty.tsv")
-    .defer(d3.tsv,"data/seventeen_beauty.tsv")
-    .defer(d3.tsv,"data/esquire_beauty.tsv")
+    .defer(d3.tsv,"data/lem/elle_beauty_lem.tsv")
+    .defer(d3.tsv,"data/lem/cosmo_beauty_lem.tsv")
+    .defer(d3.tsv,"data/lem/seventeen_beauty_lem.tsv")
+    .defer(d3.tsv,"data/lem/esquire_beauty_lem.tsv")
     .await(wrangleData);
 
 function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadlineData, esquireHeadlineData) {
@@ -39,7 +39,8 @@ function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadli
                 'publishDate' : new Date(headlineRow['publish_date']),
                 'thumbnail' : headlineRow['thumbnail'],
                 'sponsor' : headlineRow['sponsor'],
-                'publication' : magHeadlineData['title']
+                'publication' : magHeadlineData['title'],
+                'lemmatized_title' : headlineRow['lemmatized_title']
             };
             if ((headline['publishDate'].getFullYear() >= 2012 && headline['publishDate'].getFullYear() <= 2019) ||
                 (headline['publishDate'].getFullYear() === 2020 && headline['publishDate'].getMonth()) === 0) {
@@ -55,7 +56,8 @@ function createVis() {
     var vis = this;
 
     var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
-    vis.overviewStackedBarChart = new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList, 'all-prop');
+    vis.overviewStackedBarChart =
+        new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList, 'all-prop');
 
     vis.sectionTreemap = new SectionTreemap("section-treemap", []);
     var sectionYearSlider = document.getElementById("section-treemap-years");
