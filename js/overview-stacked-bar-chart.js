@@ -140,9 +140,7 @@ OverviewStackedBarChart.prototype.updateVis = function(){
         t.publishDate = d.key;
         dataStack.push(t)
     });
-
-    console.log(dataStack);
-
+    
     var layersData = d3.stack().keys(vis.publications)(dataStack);
     var max = d3.max(layersData[layersData.length - 1], function(d) { return d[1]; });
 
