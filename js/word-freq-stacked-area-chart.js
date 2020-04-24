@@ -9,6 +9,8 @@ WordFreqStackedAreaChart = function(_parentElement, _data, _word){
     this.data = _data;
     this.word = _word;
     this.displayData = []; // see data wrangling
+    this.filteredData = this.data;
+    this.fillColor = "#BA68C8";
 
     this.initVis();
 };
@@ -118,7 +120,7 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
                 }),
             };
         })
-        .entries(vis.data);
+        .entries(vis.filteredData);
 
     vis.wordFreqData = [];
     for (var i = 0; i < vis.nestedWordFreqData.length; i++) {
@@ -138,7 +140,6 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
     vis.stackedData = stack(vis.wordFreqData);
     vis.displayData = vis.stackedData;
 
-    // Update the visualization
     vis.updateVis();
 };
 
@@ -174,14 +175,13 @@ WordFreqStackedAreaChart.prototype.updateVis = function(){
         .attr("y", function(d, i) { return i * 25; })
         .attr("fill", function(d){
             if (d === "contain") {
-                return "#BA68C8";
+                return vis.fillColor;
             }
             return "#E0E0E0";
         });
 
     legend.exit().remove();
 
-    // Legend labels
     var labels = vis.svg.selectAll("text.legend")
         .data(vis.dataCategories.slice().reverse());
 
@@ -206,7 +206,7 @@ WordFreqStackedAreaChart.prototype.updateVis = function(){
         .duration(800)
         .style("fill", function(d) {
             if (d.key === "contain") {
-                return "#BA68C8";
+                return vis.fillColor;
             }
             return "#E0E0E0";
         })

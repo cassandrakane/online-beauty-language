@@ -5,10 +5,11 @@
  * @param _publications     -- list of publications
  */
 
-OverviewStackedBarChart = function(_parentElement, _data, _publications, _selectPublicationValue){
+OverviewStackedBarChart = function(_parentElement, _data, _publications,  _colors, _selectPublicationValue){
     this.parentElement = _parentElement;
     this.data = _data;
     this.publications = _publications;
+    this.colors = _colors;
     this.selectPublicationValue = _selectPublicationValue;
     this.filteredData = this.data;
 
@@ -38,7 +39,7 @@ OverviewStackedBarChart.prototype.initVis = function() {
         .rangeRound([vis.height, 0])
         .nice();
 
-    vis.z = d3.scaleOrdinal(["#E57373", "#64B5F6", "#AED581"]);
+    vis.z = d3.scaleOrdinal(vis.colors);
 
     vis.xAxis = d3.axisBottom()
         .tickSizeOuter(0)
@@ -140,7 +141,7 @@ OverviewStackedBarChart.prototype.updateVis = function(){
         t.publishDate = d.key;
         dataStack.push(t)
     });
-    
+
     var layersData = d3.stack().keys(vis.publications)(dataStack);
     var max = d3.max(layersData[layersData.length - 1], function(d) { return d[1]; });
 

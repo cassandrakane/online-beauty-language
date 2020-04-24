@@ -1,4 +1,5 @@
 let hearstHeadlineData = [];
+let femMagHeadlineData = {};
 
 queue()
     .defer(d3.tsv,"data/lem/elle_beauty_lem.tsv")
@@ -12,23 +13,27 @@ function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadli
         console.log(error);
     }
 
-    let femMagHeadlineData = [
-        {
-            'title' : 'Elle',
-            'data' : elleHeadlineData
+    femMagHeadlineData = {
+        'elle' : {
+            'title': 'Elle',
+            'data' : elleHeadlineData,
+            'color' : "#E57373"
         },
-        {
+        'cosmopolitan' : {
             'title' : 'Cosmopolitan',
-            'data' : cosmoHeadlineData
+            'data' : cosmoHeadlineData,
+            'color' : "#64B5F6"
         },
-        {
+        'seventeen' : {
             'title' : 'Seventeen',
-            'data' : seventeenHeadlineData
+            'data' : seventeenHeadlineData,
+            'color' : "#AED581"
         }
-    ];
+    };
 
-    femMagHeadlineData.forEach(function (magHeadlineData) {
-        let headlineData = magHeadlineData['data'];
+
+    Object.keys(femMagHeadlineData).forEach(function (magHeadlineDataKey) {
+        let headlineData = femMagHeadlineData[magHeadlineDataKey]['data'];
         headlineData.forEach(function (headlineRow) {
             let headline = {
                 'title' : headlineRow['title'],
@@ -39,7 +44,7 @@ function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadli
                 'publishDate' : new Date(headlineRow['publish_date']),
                 'thumbnail' : headlineRow['thumbnail'],
                 'sponsor' : headlineRow['sponsor'],
-                'publication' : magHeadlineData['title'],
+                'publication' : femMagHeadlineData[magHeadlineDataKey]['title'],
                 'lemmatized_title' : headlineRow['lemmatized_title']
             };
             if ((headline['publishDate'].getFullYear() >= 2012 && headline['publishDate'].getFullYear() <= 2019) ||
@@ -55,9 +60,10 @@ function wrangleData(error, elleHeadlineData, cosmoHeadlineData, seventeenHeadli
 function createVis() {
     var vis = this;
 
-    var publicationsList = ['Elle', 'Cosmopolitan', 'Seventeen'];
+    var publicationsList = Object.keys(femMagHeadlineData).map(key => femMagHeadlineData[key]['title']);
+    var colorsList = Object.keys(femMagHeadlineData).map(key => femMagHeadlineData[key]['color']);
     vis.overviewStackedBarChart =
-        new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList, 'all-prop');
+        new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList, colorsList, 'all-prop');
 
     vis.sectionTreemap = new SectionTreemap("section-treemap", []);
     var sectionYearSlider = document.getElementById("section-treemap-years");
@@ -67,21 +73,25 @@ function createVis() {
     vis.wordFreqStackedAreaChart = new WordFreqStackedAreaChart("word-freq-chart", hearstHeadlineData, ' ');
 }
 
-function updateOverviewChart() {
-    var vis = this;
-    var selectPublicationValue = d3.select('#overview-chart-select-publication').property("value");
+function getDataFilteredByPublication(publicationValue) {
     var filteredHearstHeadlineData = [];
-    if (selectPublicationValue === 'all-prop' || selectPublicationValue === 'all-count') {
-        filteredHearstHeadlineData = hearstHeadlineData;
-    } else {
+    if (publicationValue === 'elle' || publicationValue === 'cosmopolitan' || publicationValue === 'seventeen') {
         hearstHeadlineData.forEach(function (headline) {
-            if (headline.publication.toLowerCase() === selectPublicationValue) {
+            if (headline.publication.toLowerCase() === publicationValue) {
                 filteredHearstHeadlineData.push(headline);
             }
         });
+    } else {
+        filteredHearstHeadlineData = hearstHeadlineData;
     }
+    return filteredHearstHeadlineData;
+}
 
-    vis.overviewStackedBarChart.filteredData = filteredHearstHeadlineData;
+function updateOverviewChart() {
+    var vis = this;
+    var selectPublicationValue = d3.select('#overview-chart-select-publication').property("value");
+
+    vis.overviewStackedBarChart.filteredData = getDataFilteredByPublication(selectPublicationValue);
     vis.overviewStackedBarChart.selectPublicationValue = selectPublicationValue;
     vis.overviewStackedBarChart.wrangleData();
 }
@@ -111,10 +121,23 @@ function updateWordFreqAxes() {
     vis.wordFreqStackedAreaChart.wrangleData();
 }
 
+function updateWordFreqPub() {
+    var vis = this;
+    var selectPublicationValue = d3.select('#word-freq-pub-select-box').property("value");
+
+    vis.wordFreqStackedAreaChart.filteredData = getDataFilteredByPublication(selectPublicationValue);
+    if (selectPublicationValue in femMagHeadlineData) {
+        vis.wordFreqStackedAreaChart.fillColor = femMagHeadlineData[selectPublicationValue]['color'];
+    } else {
+        vis.wordFreqStackedAreaChart.fillColor = "#BA68C8";
+    }
+
+    vis.wordFreqStackedAreaChart.wrangleData();
+}
+
 function submitWord() {
     var vis = this;
     var word = d3.select('#word').property("value");
-    console.log(word);
 
     vis.wordFreqStackedAreaChart.word = word;
     vis.wordFreqStackedAreaChart.wrangleData();
