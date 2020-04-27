@@ -70,7 +70,24 @@ function createVis() {
     sectionYearSlider.value = "2019";
     updateSectionMap();
 
-    vis.wordFreqStackedAreaChart = new WordFreqStackedAreaChart("word-freq-chart", hearstHeadlineData, ' ');
+    var keyword = "you";
+    vis.wordFreqYouAllStackedAreaChart =
+        new WordFreqStackedAreaChart("you-all-word-freq-chart", hearstHeadlineData, keyword, 1, false, true);
+    vis.wordFreqYouElleStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "you-elle-word-freq-chart", getDataFilteredByPublication("elle"), keyword, 0.5, true, true);
+    updateWordFreqColor(vis.wordFreqYouElleStackedAreaChart, "elle");
+    vis.wordFreqYouElleStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "you-cosmo-word-freq-chart", getDataFilteredByPublication("cosmopolitan"), keyword, 0.5, true, true);
+    updateWordFreqColor(vis.wordFreqYouElleStackedAreaChart, "cosmopolitan");
+    vis.wordFreqYouElleStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "you-seventeen-word-freq-chart", getDataFilteredByPublication("seventeen"), keyword, 0.5, true, true);
+    updateWordFreqColor(vis.wordFreqYouElleStackedAreaChart, "seventeen");
+
+    vis.customWordFreqStackedAreaChart =
+        new WordFreqStackedAreaChart("custom-word-freq-chart", hearstHeadlineData, ' ', 1, false, false);
 }
 
 function getDataFilteredByPublication(publicationValue) {
@@ -115,30 +132,34 @@ function updateSectionMap() {
     vis.sectionTreemap.wrangleData();
 }
 
-function updateWordFreqAxes() {
+function updateCustomWordFreqAxes() {
     var vis = this;
 
-    vis.wordFreqStackedAreaChart.wrangleData();
+    vis.customWordFreqStackedAreaChart.wrangleData();
 }
 
-function updateWordFreqPub() {
+function updateCustomWordFreqPub() {
     var vis = this;
     var selectPublicationValue = d3.select('#word-freq-pub-select-box').property("value");
 
-    vis.wordFreqStackedAreaChart.filteredData = getDataFilteredByPublication(selectPublicationValue);
-    if (selectPublicationValue in femMagHeadlineData) {
-        vis.wordFreqStackedAreaChart.fillColor = femMagHeadlineData[selectPublicationValue]['color'];
-    } else {
-        vis.wordFreqStackedAreaChart.fillColor = "#BA68C8";
-    }
+    updateWordFreqColor(vis.customWordFreqStackedAreaChart, selectPublicationValue);
 
-    vis.wordFreqStackedAreaChart.wrangleData();
+    vis.customWordFreqStackedAreaChart.filteredData = getDataFilteredByPublication(selectPublicationValue);
+    vis.customWordFreqStackedAreaChart.wrangleData();
+}
+
+function updateWordFreqColor(wordFreqAreaChart, publication) {
+    if (publication in femMagHeadlineData) {
+        wordFreqAreaChart.fillColor = femMagHeadlineData[publication]['color'];
+    } else {
+        wordFreqAreaChart.fillColor = "#BA68C8";
+    }
+    wordFreqAreaChart.updateVis();
 }
 
 function submitWord() {
     var vis = this;
-    var word = d3.select('#word').property("value");
 
-    vis.wordFreqStackedAreaChart.word = word;
-    vis.wordFreqStackedAreaChart.wrangleData();
+    vis.customWordFreqStackedAreaChart.word = d3.select('#word').property("value");
+    vis.customWordFreqStackedAreaChart.wrangleData();
 }

@@ -4,13 +4,17 @@
  * @param _data						-- the data
  */
 
-WordFreqStackedAreaChart = function(_parentElement, _data, _word){
+WordFreqStackedAreaChart = function(_parentElement, _data, _word, _sizeFactor, _condenseLabels, _hideLegend){
     this.parentElement = _parentElement;
     this.data = _data;
     this.word = _word;
+    this.sizeFactor = _sizeFactor;
+    this.condenseLabels = _condenseLabels;
+    this.hideLegend = _hideLegend;
     this.displayData = []; // see data wrangling
     this.filteredData = this.data;
     this.fillColor = "#BA68C8";
+    this.wordFound = false;
 
     this.initVis();
 };
@@ -20,11 +24,11 @@ WordFreqStackedAreaChart.prototype.initVis = function() {
 
     vis.margin = {top: 30, right: 130, bottom: 30, left: 80};
 
-    vis.width = 900 - vis.margin.left - vis.margin.right;
-    vis.height = 300 - vis.margin.top - vis.margin.bottom;
+    vis.width = 900 * vis.sizeFactor - vis.margin.left - vis.margin.right;
+    vis.height = 350 * vis.sizeFactor - vis.margin.top - vis.margin.bottom;
 
     vis.svg = d3.select("#" + vis.parentElement).append("svg")
-        .attr("width", vis.width + vis.margin.left + vis.margin.right)
+        .attr("width", vis.width + vis.margin.left * vis.sizeFactor + vis.margin.right * vis.sizeFactor)
         .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
@@ -76,8 +80,12 @@ function cleanText(text) {
     return text.toLowerCase().replace("\-", " ").replace(/[.,\/#!$%\^&\*;:{}=_`~()\'\"]/g, "");
 }
 
-function wordInHeadline(word, headline) {
-    return cleanText(headline).split(" ").includes(cleanText(word));
+function wordInHeadline(word, headline, vis) {
+    var isWordInHeadline = cleanText(headline).split(" ").includes(cleanText(word));
+    if (isWordInHeadline) {
+        vis.wordFound = true;
+    }
+    return isWordInHeadline;
 }
 
 WordFreqStackedAreaChart.prototype.wrangleData = function(){
@@ -94,29 +102,30 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
     }
 
     var formatDate = d3.timeFormat("%m/%y");
+    vis.wordFound = false;
     vis.nestedWordFreqData = d3.nest()
         .key(function(d) { return formatDate(d.publishDate); })
         .rollup(function(v) {
-            // TODO implement conditional
+            // TODO implement conditional for lemmatizer
             return {
                 'count' : v.length,
                 'propContain' : d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title);
+                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
                 }) / v.length,
                 'propNotContain' : (v.length - d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title);
+                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
                 })) / v.length,
                 'countContain' : d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title);
+                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
                 }),
                 'countNotContain' : v.length - d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title);
+                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
                 }),
                 'allCountContain' : d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title);
+                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
                 }),
                 'allCountNotContain' : v.length - d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title);
+                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
                 }),
             };
         })
@@ -146,8 +155,13 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
 WordFreqStackedAreaChart.prototype.updateVis = function(){
     var vis = this;
 
-    var selectedText = d3.select('#word-freq-y-select-box option:checked').text();
-    vis.yLabel.text(selectedText);
+    if (!vis.condenseLabels) {
+        var selectedText = d3.select('#word-freq-y-select-box option:checked').text();
+        vis.yLabel.text(selectedText);
+    } else {
+        // TODO generalize
+        vis.yLabel.text('Proportion');
+    }
 
     var parseDate = d3.timeParse("%m/%y");
     vis.x.domain(d3.extent(vis.wordFreqData, function(d) { return parseDate(d.publishDate); }));
@@ -160,41 +174,64 @@ WordFreqStackedAreaChart.prototype.updateVis = function(){
         });
     })]);
 
-    // Legend color blocks
-    var legend = vis.svg.selectAll("rect.legend")
+    if (!vis.hideLegend) {
+        var legend = vis.svg.selectAll("rect.legend")
+            .data(vis.dataCategories.slice().reverse());
+
+        legend.enter().append("rect")
+            .attr("class", "legend")
+            .attr("width", 15)
+            .attr("height", 15)
+            .merge(legend)
+            .transition()
+            .duration(800)
+            .attr("x", vis.width + 20)
+            .attr("y", function (d, i) {
+                return i * 25;
+            })
+            .attr("fill", function (d) {
+                if (d === "contain") {
+                    return vis.fillColor;
+                }
+                return "#E0E0E0";
+            });
+
+        legend.exit().remove();
+
+        var labels = vis.svg.selectAll("text.legend")
+            .data(vis.dataCategories.slice().reverse());
+
+        labels.enter().append("text")
+            .attr("class", "legend")
+            .merge(labels)
+            .transition()
+            .duration(800)
+            .attr("x", vis.width + 40)
+            .attr("y", function(d, i) { return i * 25 + 10; })
+            .text(function(d) { return d; });
+
+        labels.exit().remove();
+    }
+
+    var emptyViz = vis.svg.selectAll("text.empty")
         .data(vis.dataCategories.slice().reverse());
 
-    legend.enter().append("rect")
-        .attr("class", "legend")
-        .attr("width", 15)
-        .attr("height", 15)
-        .merge(legend)
+    emptyViz.enter().append("text")
+        .attr("class", "empty")
+        .merge(emptyViz)
         .transition()
-        .duration(800)
-        .attr("x", vis.width + 20)
-        .attr("y", function(d, i) { return i * 25; })
-        .attr("fill", function(d){
-            if (d === "contain") {
-                return vis.fillColor;
+        .duration(400)
+        .style("opacity", function(_) {
+            if (vis.wordFound) {
+                return 0;
             }
-            return "#E0E0E0";
-        });
+            return 1;
+        })
+        .attr("x", (vis.width - vis.margin.left) / 2)
+        .attr("y", vis.height / 2)
+        .text("Word Not Found");
 
-    legend.exit().remove();
-
-    var labels = vis.svg.selectAll("text.legend")
-        .data(vis.dataCategories.slice().reverse());
-
-    labels.enter().append("text")
-        .attr("class", "legend")
-        .merge(labels)
-        .transition()
-        .duration(800)
-        .attr("x", vis.width + 40)
-        .attr("y", function(d, i) { return i * 25 + 10; })
-        .text(function(d) { return d; });
-
-    labels.exit().remove();
+    emptyViz.exit().remove();
 
     var categories = vis.svg.selectAll(".area")
         .data(vis.displayData);

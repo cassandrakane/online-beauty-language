@@ -177,7 +177,7 @@ OverviewStackedBarChart.prototype.updateVis = function(){
     layers.exit().remove();
 
     vis.svg.select(".x-axis").call(vis.xAxis);
-    var xTicks = d3.selectAll(".tick");
+    var xTicks = vis.svg.selectAll(".tick");
     xTicks.each(function(t, i) {
         if (i % 6 !== 0) {
             d3.select(this).remove();

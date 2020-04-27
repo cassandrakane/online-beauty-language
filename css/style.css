@@ -20,6 +20,16 @@ h2 {
     width: 50%;
 }
 
+.ex-pubs-word-freq {
+    display: table-row;
+}
+
+.ex-pub-word-freq {
+    display: table-cell;
+    text-align: center;
+    padding: 5px;
+}
+
 /*********************/
 /*   RANGE SLIDER    */
 /*********************/
