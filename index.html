@@ -36,18 +36,26 @@
             <div id="you-word-freq">
                 <h4>All Eyes On You</h4>
                 <p>Occurrences of 'You' in Online Magazine Beauty Headlines Over Time</p>
-                <div id="you-all-word-freq-chart"></div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div id="you-all-word-freq-chart"></div>
+                    </div>
+                    <!--TODO annotations-->
+                    <div class="col-md-5">
+                        <p>Annotations</p>
+                    </div>
+                </div>
                 <br/>
-                <div class="ex-pubs-word-freq">
-                    <div class="ex-pub-word-freq">
+                <div class="row">
+                    <div class="ex-pub-word-freq col-md-4">
                         <h6>Elle</h6>
                         <div id="you-elle-word-freq-chart"></div>
                     </div>
-                    <div class="ex-pub-word-freq">
+                    <div class="ex-pub-word-freq col-md-4">
                         <h6>Cosmopolitan</h6>
                         <div id="you-cosmo-word-freq-chart"></div>
                     </div>
-                    <div class="ex-pub-word-freq">
+                    <div class="ex-pub-word-freq col-md-4">
                         <h6>Seventeen</h6>
                         <div id="you-seventeen-word-freq-chart"></div>
                     </div>
@@ -56,22 +64,39 @@
             <br/>
             <div id="custom-word-freq">
                 <h4>Explore</h4>
-                <label for="word">Search Word: </label>
-                <input type="text" id="word" name="word">
-                <input type="submit" onclick="submitWord()">
-                <br/>
-                <select class="form-control" id="word-freq-y-select-box" onchange="updateCustomWordFreqAxes()">
-                    <option value="proportion">Proportion of Headlines</option>
-                    <option value="count">Number of Headlines</option>
-                    <option value="all-count">All Headlines</option>
-                </select>
-                <select class="form-control" id="word-freq-pub-select-box" onchange="updateCustomWordFreqPub()">
-                    <option value="all">All Publications</option>
-                    <option value="elle">Elle</option>
-                    <option value="cosmopolitan">Cosmopolitan</option>
-                    <option value="seventeen">Seventeen</option>
-                </select>
-                <div id="custom-word-freq-chart"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="word-freq-form">
+                            <label for="word" id="search-word-label">Search Word: </label>
+                            <br/>
+                            <div class="input-group">
+                                <input type="text" id="word" name="word" class="input-group-text">
+                                <input type="submit" id="submit-word-btn" class="btn btn-primary" onclick="submitWord()">
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="word-freq-form">
+                            <label for="word-freq-y-select-box">Metric: </label>
+                            <select class="form-control" id="word-freq-y-select-box" onchange="updateCustomWordFreqAxes()">
+                                <option value="proportion">Proportion of Headlines</option>
+                                <option value="count">Number of Headlines (Contains)</option>
+                                <option value="all-count">Number of Headlines (All)</option>
+                            </select>
+                        </div>
+                        <div class="word-freq-form">
+                            <label for="word-freq-pub-select-box">Publication: </label>
+                            <select class="form-control" id="word-freq-pub-select-box" onchange="updateCustomWordFreqPub()">
+                                <option value="all">All</option>
+                                <option value="elle">Elle</option>
+                                <option value="cosmopolitan">Cosmopolitan</option>
+                                <option value="seventeen">Seventeen</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div id="custom-word-freq-chart"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

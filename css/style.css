@@ -17,17 +17,24 @@ h2 {
 }
 
 .form-control {
-    width: 50%;
+    width: 80%;
 }
 
-.ex-pubs-word-freq {
-    display: table-row;
+.word-freq-form {
+    margin: 20px;
 }
 
 .ex-pub-word-freq {
-    display: table-cell;
     text-align: center;
     padding: 5px;
+}
+
+#search-word-label {
+    margin-top: 15px;
+}
+
+#submit-word-btn {
+    margin-left: 20px;
 }
 
 /*********************/

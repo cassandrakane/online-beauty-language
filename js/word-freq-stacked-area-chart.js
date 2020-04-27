@@ -22,16 +22,16 @@ WordFreqStackedAreaChart = function(_parentElement, _data, _word, _sizeFactor, _
 WordFreqStackedAreaChart.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 30, right: 130, bottom: 30, left: 80};
+    vis.margin = {top: 50, right: 30, bottom: 30, left: 80};
 
-    vis.width = 900 * vis.sizeFactor - vis.margin.left - vis.margin.right;
+    vis.width = 700 * vis.sizeFactor - vis.margin.left - vis.margin.right;
     vis.height = 350 * vis.sizeFactor - vis.margin.top - vis.margin.bottom;
 
     vis.svg = d3.select("#" + vis.parentElement).append("svg")
-        .attr("width", vis.width + vis.margin.left * vis.sizeFactor + vis.margin.right * vis.sizeFactor)
-        .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
+        .attr("width", vis.width + vis.margin.left + vis.margin.right)
+        .attr("height", vis.height + vis.margin.top * vis.sizeFactor + vis.margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
+        .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top * vis.sizeFactor + ")");
 
     vis.svg.append("defs").append("clipPath")
         .attr("id", "clip")
@@ -95,10 +95,13 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
     vis.parameters = [];
     if (vis.yValue === "proportion") {
         vis.parameters = ["propContain", "propNotContain"];
+        vis.hideLegend = true;
     } else if (vis.yValue === "count") {
         vis.parameters = ["countContain", "countNotContain"];
+        vis.hideLegend = true;
     } else if (vis.yValue === "all-count") {
         vis.parameters = ["allCountContain", "allCountNotContain"];
+        vis.hideLegend = false;
     }
 
     var formatDate = d3.timeFormat("%m/%y");
@@ -174,44 +177,65 @@ WordFreqStackedAreaChart.prototype.updateVis = function(){
         });
     })]);
 
-    if (!vis.hideLegend) {
-        var legend = vis.svg.selectAll("rect.legend")
-            .data(vis.dataCategories.slice().reverse());
+    var showLegend = !vis.hideLegend && vis.wordFound;
+    var legend = vis.svg.selectAll("rect.legend")
+        .data(vis.dataCategories.slice().reverse());
 
-        legend.enter().append("rect")
-            .attr("class", "legend")
-            .attr("width", 15)
-            .attr("height", 15)
-            .merge(legend)
-            .transition()
-            .duration(800)
-            .attr("x", vis.width + 20)
-            .attr("y", function (d, i) {
-                return i * 25;
-            })
-            .attr("fill", function (d) {
-                if (d === "contain") {
-                    return vis.fillColor;
-                }
-                return "#E0E0E0";
-            });
+    legend.enter().append("rect")
+        .attr("class", "legend")
+        .attr("width", 15)
+        .attr("height", 15)
+        .attr("x", function (d, i) {
+            return 50 + i * (vis.width / 2);
+        })
+        .attr("y", - vis.margin.top / 2)
+        .merge(legend)
+        .transition()
+        .duration(400)
+        .style("opacity", function(_) {
+            if (showLegend) {
+                return 1;
+            }
+            return 0;
+        })
+        .attr("fill", function (d) {
+            if (d === "contain") {
+                return vis.fillColor;
+            }
+            return "#E0E0E0";
+        });
 
-        legend.exit().remove();
+    legend.exit().remove();
 
-        var labels = vis.svg.selectAll("text.legend")
-            .data(vis.dataCategories.slice().reverse());
+    var labels = vis.svg.selectAll("text.legend")
+        .data(vis.dataCategories.slice().reverse());
 
-        labels.enter().append("text")
-            .attr("class", "legend")
-            .merge(labels)
-            .transition()
-            .duration(800)
-            .attr("x", vis.width + 40)
-            .attr("y", function(d, i) { return i * 25 + 10; })
-            .text(function(d) { return d; });
+    labels.enter().append("text")
+        .attr("class", "legend")
+        .attr("x", function (d, i) {
+            return 80 + i * (vis.width / 2);
+        })
+        .attr("y", 13 - vis.margin.top / 2)
+        .merge(labels)
+        .transition()
+        .duration(400)
+        .style("opacity", function(_) {
+            if (showLegend) {
+                return 1;
+            }
+            return 0;
+        })
+        .text(function(d) {
+            if (d === "notContain") {
+                return "Does not contain \"" + vis.word + "\""
+            }
+            if (d === "contain") {
+                return "Contains \"" + vis.word + "\""
+            }
+            return d;
+        });
 
-        labels.exit().remove();
-    }
+    labels.exit().remove();
 
     var emptyViz = vis.svg.selectAll("text.empty")
         .data(vis.dataCategories.slice().reverse());
@@ -248,8 +272,8 @@ WordFreqStackedAreaChart.prototype.updateVis = function(){
             return "#E0E0E0";
         })
         .style("opacity", function(d) {
-            if ((vis.parameters[0] === "propContain" || vis.parameters[0] === "countContain")
-                && d.key === "notContain") {
+            if (((vis.parameters[0] === "propContain" || vis.parameters[0] === "countContain")
+                && d.key === "notContain") || !vis.wordFound) {
                 return 0;
             }
             return 1;
