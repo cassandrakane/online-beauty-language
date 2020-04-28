@@ -21,7 +21,7 @@ h2 {
 }
 
 .word-freq-form {
-    margin: 20px;
+    margin: 15px;
 }
 
 .ex-pub-word-freq {
@@ -35,6 +35,15 @@ h2 {
 
 #submit-word-btn {
     margin-left: 20px;
+}
+
+.search-type-input-label {
+    margin-left: 5px;
+}
+
+#search-type-input {
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 /*********************/

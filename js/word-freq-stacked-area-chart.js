@@ -81,7 +81,11 @@ function cleanText(text) {
 }
 
 function wordInHeadline(word, headline, vis) {
-    var isWordInHeadline = cleanText(headline).split(" ").includes(cleanText(word));
+    var cleanWord = cleanText(word);
+    if (cleanWord === '') {
+        return false;
+    }
+    var isWordInHeadline = cleanText(headline).split(" ").includes(cleanWord);
     if (isWordInHeadline) {
         vis.wordFound = true;
     }
@@ -104,31 +108,39 @@ WordFreqStackedAreaChart.prototype.wrangleData = function(){
         vis.hideLegend = false;
     }
 
+    var searchTypeValue = d3.select('input[name="search-type"]:checked').node().value;
+    var titleTypeKey = '';
+    if (searchTypeValue === 'strict') {
+        titleTypeKey = 'title';
+    }
+    if (searchTypeValue === 'similar') {
+        titleTypeKey = 'lemmatized_title';
+    }
+
     var formatDate = d3.timeFormat("%m/%y");
     vis.wordFound = false;
     vis.nestedWordFreqData = d3.nest()
         .key(function(d) { return formatDate(d.publishDate); })
         .rollup(function(v) {
-            // TODO implement conditional for lemmatizer
             return {
                 'count' : v.length,
                 'propContain' : d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
+                    return wordInHeadline(vis.word, d[titleTypeKey], vis);
                 }) / v.length,
                 'propNotContain' : (v.length - d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
+                    return wordInHeadline(vis.word, d[titleTypeKey], vis);
                 })) / v.length,
                 'countContain' : d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
+                    return wordInHeadline(vis.word, d[titleTypeKey], vis);
                 }),
                 'countNotContain' : v.length - d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
+                    return wordInHeadline(vis.word, d[titleTypeKey], vis);
                 }),
                 'allCountContain' : d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
+                    return wordInHeadline(vis.word, d[titleTypeKey], vis);
                 }),
                 'allCountNotContain' : v.length - d3.sum(v, function(d) {
-                    return wordInHeadline(vis.word, d.lemmatized_title, vis);
+                    return wordInHeadline(vis.word, d[titleTypeKey], vis);
                 }),
             };
         })

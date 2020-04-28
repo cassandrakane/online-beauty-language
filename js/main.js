@@ -163,3 +163,9 @@ function submitWord() {
     vis.customWordFreqStackedAreaChart.word = d3.select('#word').property("value");
     vis.customWordFreqStackedAreaChart.wrangleData();
 }
+
+function updateWordFreqSearchType() {
+    var vis = this;
+
+    vis.customWordFreqStackedAreaChart.wrangleData();
+}

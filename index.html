@@ -26,7 +26,8 @@
         <div id="sections">
             <h3>Sections</h3>
             <div class="slider-container">
-                <input type="range" class="slider" id="section-treemap-years" min="2012" max="2019" oninput="updateSectionMap()">
+                <input type="range" class="slider" id="section-treemap-years" min="2012" max="2019"
+                       oninput="updateSectionMap()">
             </div>
             <span id="section-treemap-year-label">Year: </span>
             <div id="section-treemap"></div>
@@ -71,13 +72,28 @@
                             <br/>
                             <div class="input-group">
                                 <input type="text" id="word" name="word" class="input-group-text">
-                                <input type="submit" id="submit-word-btn" class="btn btn-primary" onclick="submitWord()">
+                                <input type="submit" id="submit-word-btn" class="btn btn-primary"
+                                       onclick="submitWord()">
+                            </div>
+                            <div class="row" id="search-type-input">
+                                <div class="col-md-4">
+                                    <input type="radio" id="search-type-similar" name="search-type" value="similar"
+                                           onclick="updateWordFreqSearchType()" checked>
+                                    <label for="search-type-similar" class="search-type-input-label">Similar*</label>
+                                    <br>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="radio" id="search-type-strict" name="search-type" value="strict"
+                                           onclick="updateWordFreqSearchType()">
+                                    <label for="search-type-strict" class="search-type-input-label">Strict</label>
+                                    <br>
+                                </div>
                             </div>
                         </div>
-                        <br/>
                         <div class="word-freq-form">
                             <label for="word-freq-y-select-box">Metric: </label>
-                            <select class="form-control" id="word-freq-y-select-box" onchange="updateCustomWordFreqAxes()">
+                            <select class="form-control" id="word-freq-y-select-box"
+                                    onchange="updateCustomWordFreqAxes()">
                                 <option value="proportion">Proportion of Headlines</option>
                                 <option value="count">Number of Headlines (Contains)</option>
                                 <option value="all-count">Number of Headlines (All)</option>
@@ -85,7 +101,8 @@
                         </div>
                         <div class="word-freq-form">
                             <label for="word-freq-pub-select-box">Publication: </label>
-                            <select class="form-control" id="word-freq-pub-select-box" onchange="updateCustomWordFreqPub()">
+                            <select class="form-control" id="word-freq-pub-select-box"
+                                    onchange="updateCustomWordFreqPub()">
                                 <option value="all">All</option>
                                 <option value="elle">Elle</option>
                                 <option value="cosmopolitan">Cosmopolitan</option>
