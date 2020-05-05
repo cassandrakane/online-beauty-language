@@ -65,26 +65,53 @@ function createVis() {
     vis.overviewStackedBarChart =
         new OverviewStackedBarChart("overview-chart", hearstHeadlineData, publicationsList, colorsList, 'all-prop');
 
-    vis.sectionTreemap = new SectionTreemap("section-treemap", []);
-    var sectionYearSlider = document.getElementById("section-treemap-years");
-    sectionYearSlider.value = "2019";
-    updateSectionMap();
-
-    var keyword = "you";
+    var youKeyword = "you";
     vis.wordFreqYouAllStackedAreaChart =
-        new WordFreqStackedAreaChart("you-all-word-freq-chart", hearstHeadlineData, keyword, 1, false, true);
+        new WordFreqStackedAreaChart("you-all-word-freq-chart", hearstHeadlineData, youKeyword, 1, false, true);
     vis.wordFreqYouElleStackedAreaChart =
         new WordFreqStackedAreaChart(
-            "you-elle-word-freq-chart", getDataFilteredByPublication("elle"), keyword, 0.5, true, true);
+            "you-elle-word-freq-chart", getDataFilteredByPublication("elle"), youKeyword, 0.5, true, true);
     updateWordFreqColor(vis.wordFreqYouElleStackedAreaChart, "elle");
-    vis.wordFreqYouElleStackedAreaChart =
+    vis.wordFreqYouCosmoStackedAreaChart =
         new WordFreqStackedAreaChart(
-            "you-cosmo-word-freq-chart", getDataFilteredByPublication("cosmopolitan"), keyword, 0.5, true, true);
-    updateWordFreqColor(vis.wordFreqYouElleStackedAreaChart, "cosmopolitan");
-    vis.wordFreqYouElleStackedAreaChart =
+            "you-cosmo-word-freq-chart", getDataFilteredByPublication("cosmopolitan"), youKeyword, 0.5, true, true);
+    updateWordFreqColor(vis.wordFreqYouCosmoStackedAreaChart, "cosmopolitan");
+    vis.wordFreqYouSeventeenStackedAreaChart =
         new WordFreqStackedAreaChart(
-            "you-seventeen-word-freq-chart", getDataFilteredByPublication("seventeen"), keyword, 0.5, true, true);
-    updateWordFreqColor(vis.wordFreqYouElleStackedAreaChart, "seventeen");
+            "you-seventeen-word-freq-chart", getDataFilteredByPublication("seventeen"), youKeyword, 0.5, true, true);
+    updateWordFreqColor(vis.wordFreqYouSeventeenStackedAreaChart, "seventeen");
+
+    var howKeyword = "how";
+    vis.wordFreqHowAllStackedAreaChart =
+        new WordFreqStackedAreaChart("how-all-word-freq-chart", hearstHeadlineData, howKeyword, 0.75, false, true);
+    vis.wordFreqHowElleStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "how-elle-word-freq-chart", getDataFilteredByPublication("elle"), howKeyword, 0.45, true, true);
+    updateWordFreqColor(vis.wordFreqHowElleStackedAreaChart, "elle");
+    vis.wordFreqHowCosmoStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "how-cosmo-word-freq-chart", getDataFilteredByPublication("cosmopolitan"), howKeyword, 0.45, true, true);
+    updateWordFreqColor(vis.wordFreqHowCosmoStackedAreaChart, "cosmopolitan");
+    vis.wordFreqHowSeventeenStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "how-seventeen-word-freq-chart", getDataFilteredByPublication("seventeen"), howKeyword, 0.45, true, true);
+    updateWordFreqColor(vis.wordFreqHowSeventeenStackedAreaChart, "seventeen");
+
+    var needKeyword = "need";
+    vis.wordFreqNeedAllStackedAreaChart =
+        new WordFreqStackedAreaChart("need-all-word-freq-chart", hearstHeadlineData, needKeyword, 0.75, false, true);
+    vis.wordFreqNeedElleStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "need-elle-word-freq-chart", getDataFilteredByPublication("elle"), needKeyword, 0.45, true, true);
+    updateWordFreqColor(vis.wordFreqNeedElleStackedAreaChart, "elle");
+    vis.wordFreqNeedCosmoStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "need-cosmo-word-freq-chart", getDataFilteredByPublication("cosmopolitan"), needKeyword, 0.45, true, true);
+    updateWordFreqColor(vis.wordFreqNeedCosmoStackedAreaChart, "cosmopolitan");
+    vis.wordFreqNeedSeventeenStackedAreaChart =
+        new WordFreqStackedAreaChart(
+            "need-seventeen-word-freq-chart", getDataFilteredByPublication("seventeen"), needKeyword, 0.45, true, true);
+    updateWordFreqColor(vis.wordFreqNeedSeventeenStackedAreaChart, "seventeen");
 
     vis.customWordFreqStackedAreaChart =
         new WordFreqStackedAreaChart("custom-word-freq-chart", hearstHeadlineData, ' ', 1, false, false);
@@ -111,25 +138,6 @@ function updateOverviewChart() {
     vis.overviewStackedBarChart.filteredData = getDataFilteredByPublication(selectPublicationValue);
     vis.overviewStackedBarChart.selectPublicationValue = selectPublicationValue;
     vis.overviewStackedBarChart.wrangleData();
-}
-
-function updateSectionMap() {
-    var vis = this;
-    var selectSectionYear = d3.select('#section-treemap-years').property("value");
-
-    var sectionYearSlider = document.getElementById("section-treemap-year-label");
-    sectionYearSlider.innerHTML = "Year: " + selectSectionYear;
-
-    // TODO cache
-    var filteredHearstHeadlineData = [];
-    hearstHeadlineData.forEach(function (headline) {
-        if (headline.publishDate.getFullYear() === +selectSectionYear) {
-            filteredHearstHeadlineData.push(headline);
-        }
-    });
-
-    vis.sectionTreemap.filteredData = filteredHearstHeadlineData;
-    vis.sectionTreemap.wrangleData();
 }
 
 function updateCustomWordFreqAxes() {

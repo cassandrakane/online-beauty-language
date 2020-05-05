@@ -2,8 +2,8 @@
 
 body {
     height: 100%;
-    font-family: "Avenir Next";
-    padding: 20px;
+    font-family: "Avenir Next", serif;
+    padding: 40px;
 }
 
 h1 {
@@ -27,6 +27,12 @@ h2 {
 .ex-pub-word-freq {
     text-align: center;
     padding: 5px;
+}
+
+.ex-pub-word-freq-label {
+    padding-top: 50px;
+    padding-right: 25px;
+    text-align: right;
 }
 
 #search-word-label {

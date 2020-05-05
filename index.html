@@ -2,17 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>English 298DH</title>
+    <title>The Language of Beauty in Online Women's Magazines</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div>
-        <h1>English 298DH Final Project</h1>
+        <h1>The Language of Beauty in Online Women's Magazines</h1>
+        <br/>
+        <hr>
         <br/>
         <h3>Overview</h3>
         <div id="overview">
-            <label for="overview-chart-select-publication">Select:</label>
+            <label for="overview-chart-select-publication">Metric:</label>
             <select class="form-control" id="overview-chart-select-publication" onchange="updateOverviewChart()">
                 <option value="all-prop">All Publications (Proportion)</option>
                 <option value="all-count">All Publications (Count)</option>
@@ -23,27 +25,20 @@
             <div id="overview-chart"></div>
         </div>
         <br/>
-        <div id="sections">
-            <h3>Sections</h3>
-            <div class="slider-container">
-                <input type="range" class="slider" id="section-treemap-years" min="2012" max="2019"
-                       oninput="updateSectionMap()">
-            </div>
-            <span id="section-treemap-year-label">Year: </span>
-            <div id="section-treemap"></div>
-        </div>
+        <hr>
+        <br/>
         <div id="word-freq">
             <br/>
             <div id="you-word-freq">
                 <h4>All Eyes On You</h4>
-                <p>Occurrences of 'You' in Online Magazine Beauty Headlines Over Time</p>
+                <p>Occurrences of 'you' in online beauty magazine headlines, grouped by month.</p>
                 <div class="row">
                     <div class="col-md-7">
                         <div id="you-all-word-freq-chart"></div>
                     </div>
                     <!--TODO annotations-->
                     <div class="col-md-5">
-                        <p>Annotations</p>
+                        <p></p>
                     </div>
                 </div>
                 <br/>
@@ -63,8 +58,70 @@
                 </div>
             </div>
             <br/>
+            <hr>
+            <br/>
+            <div id="how-need-word-freq">
+                <h4>How To Do versus What You Need</h4>
+                <p>Occurrences of 'how' and 'need' in online beauty magazine headlines, grouped by month.</p>
+                <br/>
+                <div class="row">
+                    <div class="ex-pub-word-freq col-md-6">
+                        <h5>How</h5>
+                        <div id="how-all-word-freq-chart"></div>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-6">
+                        <h5>Need</h5>
+                        <div id="need-all-word-freq-chart"></div>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="ex-pub-word-freq col-md-2">
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <h6>Elle</h6>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <h6>Cosmopolitan</h6>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <h6>Seventeen</h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="ex-pub-word-freq col-md-2">
+                        <h5 class="ex-pub-word-freq-label">How</h5>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <div id="how-elle-word-freq-chart"></div>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <div id="how-cosmo-word-freq-chart"></div>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <div id="how-seventeen-word-freq-chart"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="ex-pub-word-freq col-md-2">
+                        <h5 class="ex-pub-word-freq-label">Need</h5>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <div id="need-elle-word-freq-chart"></div>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <div id="need-cosmo-word-freq-chart"></div>
+                    </div>
+                    <div class="ex-pub-word-freq col-md-3">
+                        <div id="need-seventeen-word-freq-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <hr>
+            <br/>
             <div id="custom-word-freq">
-                <h4>Explore</h4>
+                <h4>Explore On Your Own</h4>
                 <div class="row">
                     <div class="col-md-4">
                         <div class="word-freq-form">
@@ -116,6 +173,9 @@
                 </div>
             </div>
         </div>
+        <br/>
+        <hr>
+        <br/>
     </div>
 
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
