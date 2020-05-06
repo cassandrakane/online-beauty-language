@@ -130,13 +130,9 @@ OverviewStackedBarChart.prototype.updateVis = function(){
 
     nestedData.forEach(function(d) {
         d.values = d.values.map(function(e) { return e.value; });
-        var valueSum = d.values.reduce((a, b) => a + b, 0);
         var t = {};
         vis.publications.forEach(function(e, i) {
             t[e] = d.values[i];
-            if (vis.selectPublicationValue === 'all-prop') {
-                t[e] = d.values[i] / valueSum;
-            }
         });
         t.publishDate = d.key;
         dataStack.push(t)
