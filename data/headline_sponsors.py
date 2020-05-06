@@ -62,8 +62,8 @@ for keyword in KEYWORDS:
 
 with open(OUTPUT_FILE, 'w') as output_file:
 	writer = csv.writer(output_file, delimiter='\t')
-	writer.writerow(['keyword', 'elle_prop_spon', 'elle_prop_unspon', 'elle_spon_factor',
-		'cosmo_prop_spon', 'cosmo_prop_unspon', 'cosmo_spon_factor',
-		'seventeen_prop_spon', 'seventeen_prop_unspon', 'seventeen_spon_factor',
-		'all_prop_spon', 'all_prop_unspon', 'all_spon_factor'])
+	writer.writerow(['keyword', 'elle_spon_prop', 'elle_unspon_prop', 'elle_spon_ratio',
+		'cosmo_spon_prop', 'cosmo_unspon_prop', 'cosmo_spon_ratio',
+		'seventeen_spon_prop', 'seventeen_unspon_prop', 'seventeen_spon_ratio',
+		'all_spon_prop', 'all_unspon_prop', 'all_spon_ratio'])
 	writer.writerows(keyword_data_rows)

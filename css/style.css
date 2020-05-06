@@ -35,6 +35,14 @@ h2 {
     text-align: right;
 }
 
+.ex-sponsor-word-freq {
+    padding: 20px;
+}
+
+.ex-sponsor-word-freq-table {
+    margin-top: 25px;
+}
+
 #search-word-label {
     margin-top: 15px;
 }
